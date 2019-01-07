@@ -3,13 +3,6 @@ module Multinomiala where
 import           Data.List
 import           Data.Either
 
--- TODO:
--- fix monoSum
--- QuickCheck tests:
--- 1) monoInit (fst p) (monoExtractVar p) (monoExtractExps p) == p
--- 2) monoSum is associative
-
-
 type Monomial = (Integer, [(Char, Int)])
 type Polynomial = [Monomial]
 
@@ -89,9 +82,9 @@ monoRaise m exp = (fst m ^ exp, map (raiser exp) (snd m))
 -- is more elegant.
 -- Currently, monoSum _assumes_ that its arguments are summable
 
--- sum a Monomial
+-- sum two Monomials
 monoSum' :: Monomial -> Monomial -> Monomial
-monoSum' m n = (fst m + fst n,snd m)
+monoSum' m n = (fst m + fst n,snd m) --this is very inappropriate and should be changed!
 
 monoSum :: [Monomial] -> Monomial
 monoSum [] = (0, [])
