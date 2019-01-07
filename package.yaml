@@ -1,5 +1,6 @@
 library:
   source-dirs: src
+  exposed-modules: Multinomiala
 tests:
   hask-monomi-test:
     source-dirs: test
@@ -10,7 +11,6 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - hask-monomi
-    - Hspec
 copyright: fouche
 maintainer: fosco.loregian@gmail.com
 dependencies:
