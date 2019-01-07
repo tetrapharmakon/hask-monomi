@@ -1,7 +1,7 @@
 module Multinomiala where
 
 import           Data.List
-import           Data.Either
+import           Data.Either()
 
 type Monomial = (Integer, [(Char, Int)])
 type Polynomial = [Monomial]
@@ -18,7 +18,7 @@ rleCompress y@(x : xs) =
  (x, length $ head $ pack y) : rleCompress (dropWhile (== x) xs)
 
 rleReduce :: (Eq a, Ord a) => [(a, Int)] -> [(a, Int)]
-rleReduce x = filter (\x -> snd x /= 0) $ map reducer $ groupBy (\x y -> fst x == fst y) $ sortOn fst x
+rleReduce a = filter (\x -> snd x /= 0) $ map reducer $ groupBy (\x y -> fst x == fst y) $ sortOn fst a
  where reducer w = (fst $ head w, sum $ map snd w)
 
 rleExpandPiece :: (a, Int) -> [a]
@@ -33,7 +33,7 @@ rleAddToList ls x = rleReduce $ rleCompress (ls ++ rleExpand x)
 -- reduction of a monomial
 monoReduce :: Monomial -> Monomial
 monoReduce m | fst m == 0 = (0,[])
-             | otherwise = (fst m, rleReduce (snd m))
+             | otherwise  = (fst m, rleReduce (snd m))
 
 -- algebra with monomials: multiplication
 monoMultiply :: Monomial -> Monomial -> Monomial
@@ -64,15 +64,18 @@ monoInit coef vees exps = monoReduce (coef, zip vees exps)
 monoJoin :: (Char,Int) -> String
 monoJoin (x,e) | e == 0 = ""
                | e == 1 = [x]
-               | otherwise  = [x] ++ "^" ++ show e
+               | e > 1  = [x] ++ "^" ++ show e
+               | otherwise  = [x] ++ "^{" ++ show e ++ "}"
 
 monoShow :: Monomial -> String
-monoShow m | fst m == 1 = concatMap monoJoin (snd m)
-           | otherwise = show (fst m) ++ concatMap monoJoin (snd m)
+monoShow m | fst m == 1 = if null (snd rm) then "1" else concatMap monoJoin (snd rm)
+           | otherwise = show (fst rm) ++ concatMap monoJoin (snd rm)
+          where
+            rm = monoReduce m
 
 -- raise a monomial to the exp-power 
 monoRaise :: Monomial -> Int -> Monomial 
-monoRaise m exp = (fst m ^ exp, map (raiser exp) (snd m))
+monoRaise m e = monoReduce (fst m ^ e, map (raiser e) (snd m))
   where
     raiser n z = (fst z,n * snd z)
 
@@ -88,8 +91,16 @@ monoSum' :: Monomial -> Monomial -> Monomial
 monoSum' m n = (fst m + fst n,snd m) --this is very inappropriate and should be changed!
 
 monoSum :: [Monomial] -> Monomial
-monoSum [] = (0, [])
-monoSum ms = (sum $ map fst ms, snd $ head ms)
+-- monoSum [] = (0, [])
+monoSum ms = monoReduce $ foldl monoSum' (0,snd $ head rms) rms
+  where
+    rms = map monoReduce ms
+
+monoProduct' :: Monomial -> Monomial -> Monomial
+monoProduct' p q = monoReduce (fst p * fst q, rleReduce (snd p ++ snd q))
+
+monoProduct :: [Monomial] -> Monomial
+monoProduct ms = monoReduce $ foldr monoProduct' (1,[]) $ map monoReduce ms
 
 -- reduce a polynomial
 polyReduce :: Polynomial -> Polynomial

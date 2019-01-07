@@ -4,11 +4,11 @@ import           Test.Hspec
 import           Multinomiala
 import           Test.QuickCheck
 
-z = (0,[('x',1)])
-z1 = (0, [('y',1)])
-z2 = (0, [('y',4)])
-z3 = (1, [('x',0)])
-z4 = (1, [('y',0)])
+z = (0,[('x',1)]) -- 0
+z1 = (0, [('y',1)]) -- 0
+z2 = (0, [('y',4)]) -- 0
+uno = (1, [('x',0)]) -- 1
+uno' = (1, [('y',0)]) -- 1
 a = monoInit 3 "x" [0] -- 3
 a' = monoInit 3 "y" [0] -- 3
 b = monoInit 1 "x" [1] -- x
@@ -30,15 +30,15 @@ main = hspec $
   it "3x^0 = 3" $ do
     monoReduce a `shouldBe` (3, [])
   it "x^0 = y^0" $ do
-    monoReduce z3 == monoReduce z4 `shouldBe` True
+    monoReduce uno == monoReduce uno' `shouldBe` True
   it "0x = 0y" $ do
     monoReduce z == monoReduce z1 `shouldBe` True
   it "init a negative coefficient" $ do
     m `shouldBe` (-3, [('x',1),('z',-3)])
   it "x^1x^1x^1 = x^3" $ do
     monoReduce (1, [('x', 1),('x', 1),('x', 1)]) `shouldBe` (1, [('x',3)])
+    -- monoMultiply
   it "x  *y = xy" $ do
-  -- monoMultiply
     monoMultiply b c `shouldBe` (1, [('x', 1), ('y', 1)])
   it "3 * x = 3x" $ do
     monoMultiply a b `shouldBe` (3, [('x', 1)])
@@ -58,21 +58,14 @@ main = hspec $
     isMultiple c n `shouldBe` False  -- isLike
   -- monoExtractVar and
   -- monoExtractExps work fine
-  it "monoInit (fst m) (var m) (exps m) == m" $ do
+  it "custom monoInit (fst p) (var p) (exps p) == p" $ do
     monoInit (fst m) (monoExtractVar m) (monoExtractExps m) == m `shouldBe` True
-  it "monoInit (fst a) (var a) (exps a) == a" $ do
     monoInit (fst a) (monoExtractVar a) (monoExtractExps a) == a `shouldBe` True
-  it "monoInit (fst b) (var b) (exps b) == b" $ do
     monoInit (fst b) (monoExtractVar b) (monoExtractExps b) == b `shouldBe` True
-  it "monoInit (fst c) (var c) (exps c) == c" $ do
     monoInit (fst c) (monoExtractVar c) (monoExtractExps c) == c `shouldBe` True
-  it "monoInit (fst d) (var d) (exps d) == d" $ do
     monoInit (fst d) (monoExtractVar d) (monoExtractExps d) == d `shouldBe` True
-  it "monoInit (fst e) (var e) (exps e) == e" $ do
     monoInit (fst e) (monoExtractVar e) (monoExtractExps e) == e `shouldBe` True
-  it "monoInit (fst u) (var u) (exps u) == u" $ do
     monoInit (fst u) (monoExtractVar u) (monoExtractExps u) == u `shouldBe` True
-  it "monoInit (fst v) (var v) (exps v) == v" $ do
     monoInit (fst v) (monoExtractVar v) (monoExtractExps v) == v `shouldBe` True
   -- monoInit
   it "init zero" $ do
@@ -84,10 +77,61 @@ main = hspec $
   it "init u is correctly initialized" $ do
     u `shouldBe` monoInit 3 "xxyyy" [1,1,1,1,1]
   -- monoJoin
+  it "('x',1) -> 'x'" $ do
+    monoJoin ('x',1) `shouldBe` "x"
+  it "('a',0) -> ''" $ do
+    monoJoin ('a',0) `shouldBe` ""
+  it "('x',1) -> 'x'" $ do
+    monoJoin ('x',1) `shouldBe` "x"
+  it "('x',-3) -> 'x^{-3}'" $ do
+    monoJoin ('x',-3) `shouldBe` "x^{-3}"
   -- monoShow
+  it "monoShow tested against custom monomials"  $ do
+    monoShow z `shouldBe` "0"
+    monoShow z1 `shouldBe` "0"
+    monoShow z2 `shouldBe` "0"
+    monoShow uno `shouldBe` "1"
+    monoShow uno' `shouldBe` "1"
+    monoShow a `shouldBe` "3"
+    monoShow a' `shouldBe` "3"
+    monoShow b `shouldBe` "x"
+    monoShow c `shouldBe` "y"
+    monoShow d `shouldBe` "x^3"
+    monoShow e `shouldBe` "y^4"
+    monoShow f `shouldBe` "2x"
+    monoShow g `shouldBe` "3x^2y"
+    monoShow n `shouldBe` "3y^{-2}"
+    monoShow m `shouldBe` "-3xz^{-3}"
+    monoShow u `shouldBe` "3x^2y^3"
+    monoShow v `shouldBe` "6x^3z^3"
   -- monoRaise
-  -- monoSum'
+  it "monoRaise tested against custom monomials"  $ do
+    monoRaise z 3 `shouldBe` (0, [])
+    monoRaise z1 1 `shouldBe` (0, [])
+    monoRaise z2 2 `shouldBe` (0, [])
+    monoRaise uno 3 `shouldBe` (1,[])
+    monoRaise uno' 1 `shouldBe` (1,[])
+    monoRaise a 2 `shouldBe` (9,[])
+    monoRaise a' 3 `shouldBe` (27, [])
+    monoRaise b 3 `shouldBe` (1, [('x',3)])
+    monoRaise c 1 `shouldBe` (1, [('y',1)])
+    monoRaise d 2 `shouldBe` monoInit 1 "x" [6]
+    monoRaise e 3 `shouldBe` (1, [('y',12)])
+    monoRaise f 1 `shouldBe` f
+    monoRaise g 2 `shouldBe` (9, [('x',4),('y',2)])
+    monoRaise n 3 `shouldBe` (27, [('y', -6)])
+    monoRaise m 1 `shouldBe` monoInit (-3) "xz" [1,-3]
+    monoRaise u 2 `shouldBe` monoInit 9 "xy" [4,6]
+    monoRaise v 3 `shouldBe` monoInit (6^3) "xz" [9,9]
   -- monoSum
+  it "monoSum tested against custom monomials"  $ do
+    monoSum [z,z] `shouldBe` (0,[])
+    monoSum [z1,z2] `shouldBe` (0,[])
+    monoSum [z2,z2] `shouldBe` (0,[])
+    monoSum [b,f] `shouldBe` (3,[('x',1)])
+    monoSum [b,f,b,f,f,f] `shouldBe` (10,[('x',1)])
+    monoSum [e,(7,[('y',4)])] `shouldBe` (8,[('y',4)])
+  -- monoProduct
   -- polyReduce
   -- polySum'
   -- polySum
