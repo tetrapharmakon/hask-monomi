@@ -68,10 +68,13 @@ monoInit coef vees exps = (coef, zip vees exps)
 
 -- show polynomial
 monoJoin :: (Char,Int) -> String
-monoJoin (x,e) = [x] ++ "^" ++ show e
+monoJoin (x,e) | e == 0 = ""
+               | e == 1 = [x]
+               | e > 1  = [x] ++ "^" ++ show e
 
 monoShow :: Monomial -> String
-monoShow m = show (fst m) ++ concatMap monoJoin (snd m)
+monoShow m | fst m == 1 = concatMap monoJoin (snd m)
+           | otherwise = show (fst m) ++ concatMap monoJoin (snd m)
 
 -- raise a monomial to the exp-power 
 monoRaise :: Monomial -> Int -> Monomial 
@@ -96,17 +99,23 @@ monoSum ms = (sum $ map fst ms, snd $ head ms)
 
 -- reduce a polynomial
 polyReduce :: Polynomial -> Polynomial
-polyReduce p = map monoSum $ groupBy (\x y -> isMultiple x y) $ sort p
+polyReduce p = filter (\x -> snd x /= []) $ map monoSum $ groupBy (\x y -> isMultiple x y) $ sortOn snd p
 
 -- sum two polynomials
 polySum' :: Polynomial -> Polynomial -> Polynomial
 polySum' p q = polyReduce (p ++ q)
 
 polySum :: [Polynomial] -> Polynomial
-polySum [] = [(0,[])]
-polySum [m] = m
-polySum ps = undefined --(polySum' m (head ms)) : polySum (tail ms)
+polySum ps = polyReduce $ foldl polySum' [(0,[])] ps
 
 -- show a polynomial
 polyShow :: Polynomial -> String
 polyShow p = intercalate " + " $ map monoShow $ polyReduce p
+
+a = monoInit 3 "x" [0]
+a' = monoInit 3 "y" [0]
+b = monoInit 1 "x" [1]
+c = monoInit 1 "y" [1]
+
+aa' = [a,a']
+bc = [b,c]
