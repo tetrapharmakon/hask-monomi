@@ -1,48 +1,37 @@
-name:                hask-monomi
-version:             0.1.0.0
-github:              "githubuser/hask-monomi"
-license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2019 Author name here"
-
+library:
+  source-dirs: src
+tests:
+  hask-monomi-test:
+    source-dirs: test
+    main: Spec.hs
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hask-monomi
+    - Hspec
+copyright: fouche
+maintainer: fosco.loregian@gmail.com
+dependencies:
+- base >= 4.7 && < 5
+- List
+name: hask-monomi
+version: 0.1.0.0
 extra-source-files:
 - README.md
 - ChangeLog.md
-
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
-
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/hask-monomi#readme>
-
-dependencies:
-- base >= 4.7 && < 5
-
-library:
-  source-dirs: src
-
+author: fouche
+github: tetrapharmakon/hask-monomi
+license: BSD3
 executables:
   hask-monomi-exe:
-    main:                Main.hs
-    source-dirs:         app
+    source-dirs: src
+    main: Multinomiala.hs
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
     - hask-monomi
-
-tests:
-  hask-monomi-test:
-    main:                Spec.hs
-    source-dirs:         test
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - hask-monomi
+description: Please see the README on GitHub at <https://github.com/tetrapharmakon/hask-monomi#readme>
