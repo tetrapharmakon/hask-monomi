@@ -32,7 +32,8 @@ rleAddToList ls x = rleReduce $ rleCompress (ls ++ rleExpand x)
 
 -- reduction of a monomial
 monoReduce :: Monomial -> Monomial
-monoReduce m = (fst m, rleReduce (snd m))
+monoReduce m | fst m == 0 = (0,[])
+             | otherwise = (fst m, rleReduce (snd m))
 
 -- algebra with monomials: multiplication
 monoMultiply :: Monomial -> Monomial -> Monomial
@@ -57,13 +58,13 @@ monoExtractExps m = map snd $ snd m
 
 -- Initialize a monomial
 monoInit :: Integer -> String -> [Int] -> Monomial
-monoInit coef vees exps = (coef, zip vees exps)
+monoInit coef vees exps = monoReduce (coef, zip vees exps)
 
 -- show polynomial
 monoJoin :: (Char,Int) -> String
 monoJoin (x,e) | e == 0 = ""
                | e == 1 = [x]
-               | e > 1  = [x] ++ "^" ++ show e
+               | otherwise  = [x] ++ "^" ++ show e
 
 monoShow :: Monomial -> String
 monoShow m | fst m == 1 = concatMap monoJoin (snd m)
@@ -104,11 +105,3 @@ polySum ps = polyReduce $ foldl polySum' [(0,[])] ps
 -- show a polynomial
 polyShow :: Polynomial -> String
 polyShow p = intercalate " + " $ map monoShow $ polyReduce p
-
-a = monoInit 3 "x" [0]
-a' = monoInit 3 "y" [0]
-b = monoInit 1 "x" [1]
-c = monoInit 1 "y" [1]
-
-aa' = [a,a']
-bc = [b,c]
