@@ -5,7 +5,9 @@ import           Data.Either
 
 -- TODO:
 -- fix monoSum
--- QuickCheck tests
+-- QuickCheck tests:
+-- 1) monoInit (fst p) (monoExtractVar p) (monoExtractExps p) == p
+-- 2) monoSum is associative
 
 
 type Monomial = (Integer, [(Char, Int)])
@@ -97,8 +99,13 @@ polyReduce :: Polynomial -> Polynomial
 polyReduce p = map monoSum $ groupBy (\x y -> isMultiple x y) $ sort p
 
 -- sum two polynomials
-polySum :: Polynomial -> Polynomial -> Polynomial
-polySum p q = polyReduce (p ++ q)
+polySum' :: Polynomial -> Polynomial -> Polynomial
+polySum' p q = polyReduce (p ++ q)
+
+polySum :: [Polynomial] -> Polynomial
+polySum [] = [(0,[])]
+polySum [m] = m
+polySum ps = undefined --(polySum' m (head ms)) : polySum (tail ms)
 
 -- show a polynomial
 polyShow :: Polynomial -> String
