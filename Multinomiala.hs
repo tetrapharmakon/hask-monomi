@@ -22,7 +22,8 @@ rleCompress y@(x : xs) =
  (x, length $ head $ pack y) : rleCompress (dropWhile (== x) xs)
 
 rleReduce :: (Eq a, Ord a) => [(a, Int)] -> [(a, Int)]
-rleReduce a = filter appears $ map reducer $ groupBy alike $ sortOn fst a
+rleReduce [] = []
+rleReduce  a = filter appears $ map reducer $ groupBy alike $ sortOn fst a
  where
    appears x = snd x /= 0
    alike x y = fst x == fst y 
@@ -98,7 +99,7 @@ monoRaise m e = monoReduce (fst m ^ e, map (raiser e) (snd m))
 
 -- sum two Monomials
 monoSum' :: Monomial -> Monomial -> Monomial
-monoSum' m n = (fst m + fst n,snd m) --this is very inappropriate and should be changed!
+monoSum' m n = monoReduce (fst m + fst n,snd m) --this is very inappropriate and should be changed!
 
 monoSum :: [Monomial] -> Monomial
 -- monoSum [] = (0, [])
@@ -119,9 +120,14 @@ polyReduce p = filter nonzero $ map monoSum $ groupBy alike $ sortOn snd p
     nonzero x = fst x /= 0
     alike x y = isMultiple x y
 
+polyInit :: [(Integer, String, [Int])] -> Polynomial
+polyInit = map monoPInit
+  where
+    monoPInit (x, y, z) = monoInit x y z
+
 -- sum two polynomials
 polySum' :: Polynomial -> Polynomial -> Polynomial
-polySum' p q = polyReduce (p ++ q)
+polySum' p q = polyReduce ((polyReduce p) ++ (polyReduce q))
 
 polySum :: [Polynomial] -> Polynomial
 polySum ps = polyReduce $ foldl polySum' [(0,[])] rps
@@ -146,5 +152,5 @@ polyRaise p n = polyReduce $ polyProduct $ rleExpandPiece (p,n)
 -- polynomials as polynomial functions:
 -- a polynomial can be evaluated in another and 
 -- subsequently simplified
-polySub :: Polynomial -> [Polynomial] -> Polynomial
-polySub p q = undefined
+-- polySub :: Polynomial -> [Polynomial] -> Polynomial
+-- polySub p qs = undefined
