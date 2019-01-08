@@ -121,4 +121,6 @@ polyProduct ps = polyReduce $ foldr polyProduct' [(1,[])] ps
 
 -- show a polynomial
 polyShow :: Polynomial -> String
-polyShow p = intercalate " + " $ map monoShow $ polyReduce p
+polyShow p = intercalate " + " $ map monoShow $ polyReduce rp
+  where
+    rp = map monoReduce p
