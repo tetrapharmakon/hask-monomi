@@ -1,1 +1,1 @@
-# hask-monomi
+# multinomiala-hs
