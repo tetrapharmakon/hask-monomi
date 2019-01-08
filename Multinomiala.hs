@@ -63,6 +63,13 @@ monoExtractExps m = map snd $ snd m
 monoInit :: Integer -> String -> [Int] -> Monomial
 monoInit coef vees exps = monoReduce (coef, zip vees exps)
 
+-- auxiliary initialization of const mo/poly-nomial
+monoConst :: Integer -> Monomial
+monoConst n = monoInit n "" []
+
+polyConst :: Integer -> Polynomial
+polyConst n = [monoConst n]
+
 -- show polynomial
 monoJoin :: (Char,Int) -> String
 monoJoin (x,e) | e == 0 = ""
@@ -135,3 +142,9 @@ polyShow p = intercalate " + " $ map monoShow $ polyReduce rp
 
 polyRaise :: Polynomial -> Int -> Polynomial
 polyRaise p n = polyReduce $ polyProduct $ rleExpandPiece (p,n)
+
+-- polynomials as polynomial functions:
+-- a polynomial can be evaluated in another and 
+-- subsequently simplified
+polySub :: Polynomial -> [Polynomial] -> Polynomial
+polySub p q = undefined
