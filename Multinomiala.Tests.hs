@@ -29,6 +29,11 @@ main = hspec $
   -- monoReduce
   it "3x^0 = 3" $ do
     monoReduce a `shouldBe` (3, [])
+    monoReduce z `shouldBe` (0, [])
+    monoReduce z1 `shouldBe` (0, [])
+    monoReduce z2 `shouldBe` (0, [])
+    monoReduce uno `shouldBe` (1, [])
+    monoReduce uno' `shouldBe` (1, [])
   it "x^0 = y^0" $ do
     monoReduce uno == monoReduce uno' `shouldBe` True
   it "0x = 0y" $ do
@@ -58,6 +63,7 @@ main = hspec $
     isMultiple c n `shouldBe` False  -- isLike
   -- monoExtractVar and
   -- monoExtractExps work fine
+  -- together with monoInit
   it "custom monoInit (fst p) (var p) (exps p) == p" $ do
     monoInit (fst m) (monoExtractVar m) (monoExtractExps m) == m `shouldBe` True
     monoInit (fst a) (monoExtractVar a) (monoExtractExps a) == a `shouldBe` True
@@ -68,22 +74,17 @@ main = hspec $
     monoInit (fst u) (monoExtractVar u) (monoExtractExps u) == u `shouldBe` True
     monoInit (fst v) (monoExtractVar v) (monoExtractExps v) == v `shouldBe` True
   -- monoInit
-  it "init zero" $ do
+  it "monoInit tested for correct reduction" $ do
     monoInit 0 "xy" [1,1] `shouldBe` (0, [])
-  it "init a constant, 1" $ do
     monoInit 3 "" [0] `shouldBe` (3, [])
-  it "init a constant, 2" $ do
     monoInit 2 "" [0] `shouldBe` (2, [])
-  it "init u is correctly initialized" $ do
+  it "init u is correctly initialized and reduced" $ do
     u `shouldBe` monoInit 3 "xxyyy" [1,1,1,1,1]
   -- monoJoin
-  it "('x',1) -> 'x'" $ do
+  it "monoJoin custom tests" $ do
     monoJoin ('x',1) `shouldBe` "x"
-  it "('a',0) -> ''" $ do
     monoJoin ('a',0) `shouldBe` ""
-  it "('x',1) -> 'x'" $ do
     monoJoin ('x',1) `shouldBe` "x"
-  it "('x',-3) -> 'x^{-3}'" $ do
     monoJoin ('x',-3) `shouldBe` "x^{-3}"
   -- monoShow
   it "monoShow tested against custom monomials"  $ do
@@ -143,7 +144,10 @@ main = hspec $
   it "polyReduce tested against custom monomials"  $ do
     polyReduce [z,z1,z2] `shouldBe` []
     polyReduce [a,b,f] `shouldBe` [monoInit 3 "" [], monoInit 3 "x" [1]]
-  -- polySum
+  it "polyRaise tested against custom monomials"  $ do
+    polyRaise [z] 3 `shouldBe` []
+    polyRaise [b,c] 2 `shouldBe` polyReduce [(1,[('x',2)]),(2,[('x',1),('y',1)]),(1,[('y',2)])]
+    -- polySum
   -- ...
   -- polyShow
   -- ...

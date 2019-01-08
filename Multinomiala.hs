@@ -132,3 +132,6 @@ polyShow :: Polynomial -> String
 polyShow p = intercalate " + " $ map monoShow $ polyReduce rp
   where
     rp = map monoReduce p
+
+polyRaise :: Polynomial -> Int -> Polynomial
+polyRaise p n = polyReduce $ polyProduct $ rleExpandPiece (p,n)
