@@ -104,7 +104,7 @@ monoProduct ms = monoReduce $ foldr monoProduct' (1,[]) $ map monoReduce ms
 
 -- reduce a polynomial
 polyReduce :: Polynomial -> Polynomial
-polyReduce p = filter (\x -> snd x /= []) $ map monoSum $ groupBy (\x y -> isMultiple x y) $ sortOn snd p
+polyReduce p = filter (\x -> fst x /= 0) $ map monoSum $ groupBy (\x y -> isMultiple x y) $ sortOn snd p
 
 -- sum two polynomials
 polySum' :: Polynomial -> Polynomial -> Polynomial
@@ -112,6 +112,12 @@ polySum' p q = polyReduce (p ++ q)
 
 polySum :: [Polynomial] -> Polynomial
 polySum ps = polyReduce $ foldl polySum' [(0,[])] ps
+
+polyProduct' :: Polynomial -> Polynomial -> Polynomial
+polyProduct' p q = polyReduce $ concat [[monoProduct' m n | n <- p] | m <- q]
+
+polyProduct :: [Polynomial] -> Polynomial
+polyProduct ps = polyReduce $ foldr polyProduct' [(1,[])] ps
 
 -- show a polynomial
 polyShow :: Polynomial -> String

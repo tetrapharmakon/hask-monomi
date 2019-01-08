@@ -132,7 +132,21 @@ main = hspec $
     monoSum [b,f,b,f,f,f] `shouldBe` (10,[('x',1)])
     monoSum [e,(7,[('y',4)])] `shouldBe` (8,[('y',4)])
   -- monoProduct
+  it "monoProduct tested against custom monomials"  $ do
+    monoProduct [a,b,f] `shouldBe` (6,[('x',2)])
+    monoProduct [d,e,f] `shouldBe` (2,[('x',4),('y',4)])
+    monoProduct [z,a] `shouldBe` (0,[])
+    monoProduct [z1,b] `shouldBe` (0,[])
+    monoProduct [z,f] `shouldBe` (0,[])
+    monoProduct [a,b,c,d,e,f,u,v] `shouldBe` (108,[('x',10),('y',8),('z',3)])
   -- polyReduce
-  -- polySum'
+  it "polyReduce tested against custom monomials"  $ do
+    polyReduce [z,z1,z2] `shouldBe` []
+    polyReduce [a,b,f] `shouldBe` [monoInit 3 "" [], monoInit 3 "x" [1]]
   -- polySum
+  -- ...
   -- polyShow
+  -- ...
+
+-- runQc :: IO ()
+-- runQc = quickCheck polyReduce
