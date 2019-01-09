@@ -2,7 +2,6 @@ module Multinomiala.Tests where
 
 import           Test.Hspec
 import           Multinomiala
-import           Test.QuickCheck
 
 z = (0,[('x',1)]) -- 0
 z1 = (0, [('y',1)]) -- 0
@@ -34,33 +33,21 @@ main = hspec $
     monoReduce z2 `shouldBe` (0, [])
     monoReduce uno `shouldBe` (1, [])
     monoReduce uno' `shouldBe` (1, [])
-  it "x^0 = y^0" $ do
-    monoReduce uno == monoReduce uno' `shouldBe` True
-  it "0x = 0y" $ do
-    monoReduce z == monoReduce z1 `shouldBe` True
-  it "init a negative coefficient" $ do
-    m `shouldBe` (-3, [('x',1),('z',-3)])
-  it "x^1x^1x^1 = x^3" $ do
-    monoReduce (1, [('x', 1),('x', 1),('x', 1)]) `shouldBe` (1, [('x',3)])
+  it "x^0 = y^0" $ monoReduce uno == monoReduce uno' `shouldBe` True
+  it "0x = 0y"   $ monoReduce z == monoReduce z1 `shouldBe` True
+  it "init a negative coefficient" $ m `shouldBe` (-3, [('x',1),('z',-3)])
+  it "x^1x^1x^1 = x^3" $ monoReduce (1, [('x', 1),('x', 1),('x', 1)]) `shouldBe` (1, [('x',3)])
     -- monoMultiply
-  it "x  *y = xy" $ do
-    monoMultiply b c `shouldBe` (1, [('x', 1), ('y', 1)])
-  it "3 * x = 3x" $ do
-    monoMultiply a b `shouldBe` (3, [('x', 1)])
-  it "-3xz^{-3} * 3y^{-2}=-9xy^{-2}z^{-3}" $ do
-    monoMultiply m n `shouldBe` (-9, [('x', 1), ('y', -2), ('z', -3)])
+  it "x  *y = xy" $ monoMultiply b c `shouldBe` (1, [('x', 1), ('y', 1)])
+  it "3 * x = 3x" $ monoMultiply a b `shouldBe` (3, [('x', 1)])
+  it "-3xz^{-3} * 3y^{-2}=-9xy^{-2}z^{-3}" $ monoMultiply m n `shouldBe` (-9, [('x', 1), ('y', -2), ('z', -3)])
   -- monomial powers
-  it "(x)^3 = x^3" $ do
-    monoRaise b 3 `shouldBe` (1, [('x',3)])
-  it "(x)^1 = x" $ do
-    monoRaise b 1 `shouldBe` b
-  it "(2x)^3 = 8x^3" $ do
-    monoRaise f 3 `shouldBe` (8,[('x',3)])
+  it "(x)^3 = x^3" $ monoRaise b 3 `shouldBe` (1, [('x',3)])
+  it "(x)^1 = x" $ monoRaise b 1 `shouldBe` b
+  it "(2x)^3 = 8x^3" $ monoRaise f 3 `shouldBe` (8,[('x',3)])
   -- isMultiple
-  it "x and 2x are multiples" $ do
-    isMultiple b f `shouldBe` True
-  it "y and 3y^{-1} are not multiples" $ do
-    isMultiple c n `shouldBe` False  -- isLike
+  it "x and 2x are multiples" $ isMultiple b f `shouldBe` True
+  it "y and 3y^{-1} are not multiples" $ isMultiple c n `shouldBe` False  -- isLike
   -- monoExtractVar and
   -- monoExtractExps work fine
   -- together with monoInit
@@ -150,6 +137,3 @@ main = hspec $
     -- polySum
   -- ...
   -- polyShow
-  -- ...
--- runQc :: IO ()
--- runQc = quickCheck polyReduce
