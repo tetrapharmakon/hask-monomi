@@ -6,10 +6,6 @@ import           Data.Either()
 type Monomial = (Integer, [(Char, Int)])
 type Polynomial = [Monomial]
 
-
--- polyRaise
--- polynomial substitution?
-
 -- groups similar elements
 pack :: (Eq a) => [a] -> [[a]]
 pack []       = []
@@ -79,10 +75,11 @@ monoJoin (x,e) | e == 0 = ""
                | otherwise  = [x] ++ "^{" ++ show e ++ "}"
 
 monoShow :: Monomial -> String
-monoShow m | fst m == 1 = if null (snd rm) then "1" else concatMap monoJoin (snd rm)
-           | otherwise = show (fst rm) ++ concatMap monoJoin (snd rm)
-          where
-            rm = monoReduce m
+monoShow m 
+  | fst m == 1 = if null (snd rm) then "1" else concatMap monoJoin (snd rm)
+  | otherwise = show (fst rm) ++ concatMap monoJoin (snd rm)
+    where
+      rm = monoReduce m
 
 -- raise a monomial to the exp-power 
 monoRaise :: Monomial -> Int -> Monomial 
@@ -99,7 +96,8 @@ monoRaise m e = monoReduce (fst m ^ e, map (raiser e) (snd m))
 
 -- sum two Monomials
 monoSum' :: Monomial -> Monomial -> Monomial
-monoSum' m n = monoReduce (fst m + fst n,snd m) --this is very inappropriate and should be changed!
+--this is very inappropriate and should be changed!
+monoSum' m n = monoReduce (fst m + fst n,snd m) 
 
 monoSum :: [Monomial] -> Monomial
 -- monoSum [] = (0, [])
@@ -148,8 +146,11 @@ polyShow p = intercalate " + " $ map monoShow $ polyReduce rp
 polyRaise :: Polynomial -> Int -> Polynomial
 polyRaise p n = polyReduce $ polyProduct $ rleExpandPiece (p,n)
 
--- polynomials as polynomial functions:
--- a polynomial can be evaluated in another and 
--- subsequently simplified
--- polySub :: Polynomial -> [Polynomial] -> Polynomial
--- polySub p qs = undefined
+-- -- polynomials as polynomial functions:
+-- -- a polynomial can be evaluated in another and 
+-- -- subsequently simplified
+-- -- polySub :: Polynomial -> [Polynomial] -> Polynomial
+-- insertPinM :: Monomial -> [Polynomial] -> Polynomial
+-- insertPinM m qs = polyProduct $ 
+--                     zipWith polyRaise qs ems ++ [polyInit [(fst m, "", [])]]
+--   where ems = monoExtractExps m
