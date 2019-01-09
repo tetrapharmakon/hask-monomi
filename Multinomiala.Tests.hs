@@ -151,8 +151,5 @@ main = hspec $
   -- ...
   -- polyShow
   -- ...
-
-polySub "x^2y + 3xy" [("x" -> "s+1"), ("y" -> "st")]
-
 -- runQc :: IO ()
 -- runQc = quickCheck polyReduce

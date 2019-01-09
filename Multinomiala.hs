@@ -111,14 +111,13 @@ monoProduct' :: Monomial -> Monomial -> Monomial
 monoProduct' p q = monoReduce (fst p * fst q, rleReduce (snd p ++ snd q))
 
 monoProduct :: [Monomial] -> Monomial
-monoProduct ms = monoReduce $ foldr monoProduct' (1,[]) $ map monoReduce ms
+monoProduct ms = monoReduce $ foldr (monoProduct' . monoReduce) (1, []) ms
 
 -- reduce a polynomial
 polyReduce :: Polynomial -> Polynomial
-polyReduce p = filter nonzero $ map monoSum $ groupBy alike $ sortOn snd p
+polyReduce p = filter nonzero $ map monoSum $ groupBy isMultiple $ sortOn snd p
   where
     nonzero x = fst x /= 0
-    alike x y = isMultiple x y
 
 polyInit :: [(Integer, String, [Int])] -> Polynomial
 polyInit = map monoPInit
@@ -127,7 +126,7 @@ polyInit = map monoPInit
 
 -- sum two polynomials
 polySum' :: Polynomial -> Polynomial -> Polynomial
-polySum' p q = polyReduce ((polyReduce p) ++ (polyReduce q))
+polySum' p q = polyReduce (polyReduce p ++ polyReduce q)
 
 polySum :: [Polynomial] -> Polynomial
 polySum ps = polyReduce $ foldl polySum' [(0,[])] rps
