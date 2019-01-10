@@ -22,6 +22,11 @@ m = monoInit (-3) "xz" [1,-3] -- -3xz^{-3}
 u = monoInit 3 "xy" [2,3] -- 3x^2y^3
 v = monoInit 6 "xz" [3,3] -- 6x^3z^3
 
+s = monoInit 2 "x" [-2]
+
+p = [b,d,f]
+q = [a,e,s]
+
 main :: IO ()
 main = hspec $ 
   describe "Multinomiala" $ do

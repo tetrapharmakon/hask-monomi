@@ -113,9 +113,10 @@ monoProduct ms = monoReduce $ foldr (monoProduct' . monoReduce) (1, []) ms
 
 -- reduce a polynomial
 polyReduce :: Polynomial -> Polynomial
-polyReduce p = filter nonzero $ map monoSum $ groupBy isMultiple $ sortOn snd p
+polyReduce p = filter nonzero $ map monoSum $ groupBy isMultiple $ sortOn snd rp
   where
     nonzero x = fst x /= 0
+    rp = map monoReduce p
 
 polyInit :: [(Integer, String, [Int])] -> Polynomial
 polyInit = map monoPInit
@@ -146,11 +147,11 @@ polyShow p = intercalate " + " $ map monoShow $ polyReduce rp
 polyRaise :: Polynomial -> Int -> Polynomial
 polyRaise p n = polyReduce $ polyProduct $ rleExpandPiece (p,n)
 
--- -- polynomials as polynomial functions:
--- -- a polynomial can be evaluated in another and 
--- -- subsequently simplified
--- -- polySub :: Polynomial -> [Polynomial] -> Polynomial
--- insertPinM :: Monomial -> [Polynomial] -> Polynomial
--- insertPinM m qs = polyProduct $ 
---                     zipWith polyRaise qs ems ++ [polyInit [(fst m, "", [])]]
---   where ems = monoExtractExps m
+-- polynomial replacement in a single var
+-- polySub :: Polynomial -> Polynomial -> Polynomial
+-- polySub p q = polyReduce $ concat $ zipWith polyProduct' coefpees pOfQ
+--   where
+--     expees = concatMap monoExtractExps (polyReduce p)
+--     pOfQ = zipWith polyRaise (map (const q) [1..n]) expees
+--     coefpees = map (polyConst . fst) (polyReduce p)
+--     n = length expees
