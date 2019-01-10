@@ -2,30 +2,7 @@ module Multinomiala.Tests where
 
 import           Test.Hspec
 import           Multinomiala
-
-z = (0,[('x',1)]) -- 0
-z1 = (0, [('y',1)]) -- 0
-z2 = (0, [('y',4)]) -- 0
-uno = (1, [('x',0)]) -- 1
-uno' = (1, [('y',0)]) -- 1
-a = monoInit 3 "x" [0] -- 3
-a' = monoInit 3 "y" [0] -- 3
-b = monoInit 1 "x" [1] -- x
-c = monoInit 1 "y" [1] -- y
-d = monoInit 1 "x" [3] -- x^3
-e = monoInit 1 "y" [4] -- y^4
-f = monoInit 2 "x" [1] -- 2x
-g = monoInit 3 "xy" [2,1] --- 3x^2y
-n = monoInit 3 "y" [-2] -- 3y^{-2}
-m = monoInit (-3) "xz" [1,-3] -- -3xz^{-3}
-
-u = monoInit 3 "xy" [2,3] -- 3x^2y^3
-v = monoInit 6 "xz" [3,3] -- 6x^3z^3
-
-s = monoInit 2 "x" [-2]
-
-p = [b,d,f]
-q = [a,e,s]
+import           Polydefs
 
 main :: IO ()
 main = hspec $ 
@@ -70,7 +47,7 @@ main = hspec $
     monoInit 0 "xy" [1,1] `shouldBe` (0, [])
     monoInit 3 "" [0] `shouldBe` (3, [])
     monoInit 2 "" [0] `shouldBe` (2, [])
-  it "init u is correctly initialized and reduced" $ do
+  it "init u is correctly initialized and reduced" $
     u `shouldBe` monoInit 3 "xxyyy" [1,1,1,1,1]
   -- monoJoin
   it "monoJoin custom tests" $ do
@@ -95,7 +72,7 @@ main = hspec $
     monoShow g `shouldBe` "3x^2y"
     monoShow n `shouldBe` "3y^{-2}"
     monoShow m `shouldBe` "-3xz^{-3}"
-    monoShow u `shouldBe` "3x^2y^3"
+    monoShow w `shouldBe` "3x^2y^3"
     monoShow v `shouldBe` "6x^3z^3"
   -- monoRaise
   it "monoRaise tested against custom monomials"  $ do
@@ -114,7 +91,7 @@ main = hspec $
     monoRaise g 2 `shouldBe` (9, [('x',4),('y',2)])
     monoRaise n 3 `shouldBe` (27, [('y', -6)])
     monoRaise m 1 `shouldBe` monoInit (-3) "xz" [1,-3]
-    monoRaise u 2 `shouldBe` monoInit 9 "xy" [4,6]
+    monoRaise w 2 `shouldBe` monoInit 9 "xy" [4,6]
     monoRaise v 3 `shouldBe` monoInit (6^3) "xz" [9,9]
   -- monoSum
   it "monoSum tested against custom monomials"  $ do
