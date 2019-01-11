@@ -2,7 +2,27 @@ module Multinomiala.Tests where
 
 import           Test.Hspec
 import           Multinomiala
-import           Polydefs
+
+z  = (0,[('x',1)])             -- 0
+z1 = (0, [('y',1)])            -- 0
+z2 = (0, [('y',4)])            -- 0
+u  = (1, [('x',0)])            -- 1
+u1 = (1, [('y',0)])            -- 1
+a  = monoInit 3 "x" [0]        -- 3
+a' = monoInit 3 "y" [0]        -- 3
+b  = monoInit 1 "x" [1]        -- x
+c  = monoInit 1 "y" [1]        -- y
+d  = monoInit 1 "x" [3]        -- x^3
+e  = monoInit 1 "y" [4]        -- y^4
+f  = monoInit 2 "x" [1]        -- 2x
+g  = monoInit 3 "xy" [2,1]     -- 3x^2y
+n  = monoInit 3 "y" [-2]       -- 3y^{-2}
+m  = monoInit (-3) "xz" [1,-3] -- -3xz^{-3}
+w  = monoInit 3 "xy" [2,3]     -- 3x^2y^3
+v  = monoInit 6 "xz" [3,3]     -- 6x^3z^3
+s  = monoInit 2 "x" [-2]       -- 2x^{-2}
+k  = [b,d,f]
+q  = [a,e,s]
 
 main :: IO ()
 main = hspec $ 
@@ -13,9 +33,9 @@ main = hspec $
     monoReduce z `shouldBe` (0, [])
     monoReduce z1 `shouldBe` (0, [])
     monoReduce z2 `shouldBe` (0, [])
-    monoReduce uno `shouldBe` (1, [])
-    monoReduce uno' `shouldBe` (1, [])
-  it "x^0 = y^0" $ monoReduce uno == monoReduce uno' `shouldBe` True
+    monoReduce u `shouldBe` (1, [])
+    monoReduce u1 `shouldBe` (1, [])
+  it "x^0 = y^0" $ monoReduce u == monoReduce u1 `shouldBe` True
   it "0x = 0y"   $ monoReduce z == monoReduce z1 `shouldBe` True
   it "init a negative coefficient" $ m `shouldBe` (-3, [('x',1),('z',-3)])
   it "x^1x^1x^1 = x^3" $ monoReduce (1, [('x', 1),('x', 1),('x', 1)]) `shouldBe` (1, [('x',3)])
@@ -40,7 +60,7 @@ main = hspec $
     monoInit (fst c) (monoExtractVar c) (monoExtractExps c) == c `shouldBe` True
     monoInit (fst d) (monoExtractVar d) (monoExtractExps d) == d `shouldBe` True
     monoInit (fst e) (monoExtractVar e) (monoExtractExps e) == e `shouldBe` True
-    monoInit (fst u) (monoExtractVar u) (monoExtractExps u) == u `shouldBe` True
+    monoInit (fst w) (monoExtractVar w) (monoExtractExps w) == w `shouldBe` True
     monoInit (fst v) (monoExtractVar v) (monoExtractExps v) == v `shouldBe` True
   -- monoInit
   it "monoInit tested for correct reduction" $ do
@@ -48,7 +68,7 @@ main = hspec $
     monoInit 3 "" [0] `shouldBe` (3, [])
     monoInit 2 "" [0] `shouldBe` (2, [])
   it "init u is correctly initialized and reduced" $
-    u `shouldBe` monoInit 3 "xxyyy" [1,1,1,1,1]
+    w `shouldBe` monoInit 3 "xxyyy" [1,1,1,1,1]
   -- monoJoin
   it "monoJoin custom tests" $ do
     monoJoin ('x',1) `shouldBe` "x"
@@ -60,8 +80,8 @@ main = hspec $
     monoShow z `shouldBe` "0"
     monoShow z1 `shouldBe` "0"
     monoShow z2 `shouldBe` "0"
-    monoShow uno `shouldBe` "1"
-    monoShow uno' `shouldBe` "1"
+    monoShow u `shouldBe` "1"
+    monoShow u1 `shouldBe` "1"
     monoShow a `shouldBe` "3"
     monoShow a' `shouldBe` "3"
     monoShow b `shouldBe` "x"
@@ -79,8 +99,8 @@ main = hspec $
     monoRaise z 3 `shouldBe` (0, [])
     monoRaise z1 1 `shouldBe` (0, [])
     monoRaise z2 2 `shouldBe` (0, [])
-    monoRaise uno 3 `shouldBe` (1,[])
-    monoRaise uno' 1 `shouldBe` (1,[])
+    monoRaise u 3 `shouldBe` (1,[])
+    monoRaise u1 1 `shouldBe` (1,[])
     monoRaise a 2 `shouldBe` (9,[])
     monoRaise a' 3 `shouldBe` (27, [])
     monoRaise b 3 `shouldBe` (1, [('x',3)])
@@ -108,7 +128,7 @@ main = hspec $
     monoProduct [z,a] `shouldBe` (0,[])
     monoProduct [z1,b] `shouldBe` (0,[])
     monoProduct [z,f] `shouldBe` (0,[])
-    monoProduct [a,b,c,d,e,f,u,v] `shouldBe` (108,[('x',10),('y',8),('z',3)])
+    monoProduct [a,b,c,d,e,f,w,v] `shouldBe` (108,[('x',10),('y',8),('z',3)])
   -- polyReduce
   it "polyReduce tested against custom monomials"  $ do
     polyReduce [z,z1,z2] `shouldBe` []
