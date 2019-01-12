@@ -149,14 +149,7 @@ polyShow p = intercalate " + " $ map monoShow $ polyReduce rp
   where
     rp = map monoReduce p
 
-polyRaise :: Polynomial -> Int -> Polynomial
-polyRaise p n = polyReduce $ polyProduct $ rleExpandPiece (p,n)
-
--- polynomial replacement in a single var
--- polySub :: Polynomial -> Polynomial -> Polynomial
--- polySub p q = polyReduce $ concat $ zipWith polyProduct' coefpees pOfQ
---   where
---     expees = concatMap monoExtractExps (polyReduce p)
---     pOfQ = zipWith polyRaise (map (const q) [1..n]) expees
---     coefpees = map (polyConst . fst) (polyReduce p)
---     n = length expees
+polyRaise :: Polynomial -> Int -> Maybe Polynomial
+polyRaise p n
+  | n > 0 = Just (polyReduce $ polyProduct $ rleExpandPiece (p, n))
+  | otherwise = Nothing
