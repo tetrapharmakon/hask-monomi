@@ -38,18 +38,15 @@ main =
       property
         (\a b ->
            monoProduct' (a :: Monomial) (b :: Monomial) == monoProduct' b a)
-  -- it "polyProduct is distributive" $ property
-  --   (
-  --     \a b c -> polySum' (polyProduct' (a :: Polynomial) (b :: Polynomial)) (polyProduct' a (c :: Polynomial)) ==
-  --     polyProduct' a (polySum' b c)
-  --   )
+    it "polyProduct is distributive" $ property
+      (\a b c -> 
+        polySum' (polyProduct' (a :: Polynomial) (b :: Polynomial)) (polyProduct' a (c :: Polynomial)) ==
+        polyProduct' a (polySum' b c))
     it "polyInit coincides with monoInit on singletons" $
       property
         (\n s d ->
            [monoInit (n :: Integer) (s :: String) (d :: [Int])] ==
            polyInit [(n, s, d)])
-  -- it "polySub is associative" $ property
-  --   (\p q r -> polySub (polySub (p :: Polynomial) (q :: Polynomial)) (r :: Polynomial) == polySub p (polySub q r))
     modifyMaxSuccess (const 200) $
       it "zero is the identity element wrt monoSum" $
       property
