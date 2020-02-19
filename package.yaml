@@ -11,6 +11,7 @@ tests:
         dependencies:
             - hask-monomi
             - Hspec
+            - split
 copyright: fouche
 maintainer: fosco.loregian@gmail.com
 dependencies:
