@@ -67,9 +67,6 @@ monoInit coef vees exps = monoReduce (coef, zip vees exps)
 monoConst :: Integer -> Monomial
 monoConst n = monoInit n "" []
 
-polyConst :: Integer -> Polynomial
-polyConst n = [monoConst n]
-
 -- show polynomial
 monoJoin :: (Char, Int) -> String
 monoJoin (x, e)
@@ -89,15 +86,17 @@ monoShow m
     rm = monoReduce m
 
 -- raise a monomial to the exp-power 
-monoRaise :: Monomial -> Int -> Monomial
-monoRaise m e = monoReduce (fst m ^ e, map (raiser e) (snd m))
+monoRaise :: Monomial -> Int -> Maybe Monomial
+monoRaise m e
+  | e > 0     = Just (monoReduce (fst m ^ e, map (raiser e) (snd m)))
+  | otherwise = Nothing
   where
     raiser n z = (fst z, n * snd z)
 
 -- fix it:
--- monoSum :: Monomial -> Monomial -> Either Polynomial Monomial
--- monoSum m n | isMultiple m n = Right (fst m + fst n,snd m)
---             | otherwise      = Left [m,n]
+monoSumTest :: Monomial -> Monomial -> Either Polynomial Monomial
+monoSumTest m n | isMultiple m n = Right (fst m + fst n,snd m)
+             | otherwise      = Left [m,n]
 -- is more elegant.
 -- Currently, monoSum _assumes_ that its arguments are summable
 -- sum two Monomials
@@ -127,6 +126,9 @@ polyInit :: [(Integer, String, [Int])] -> Polynomial
 polyInit = map tupleInit
   where
     tupleInit (x, y, z) = monoInit x y z
+
+polyConst :: Integer -> Polynomial
+polyConst n = [monoConst n]
 
 -- sum two polynomials
 polySum' :: Polynomial -> Polynomial -> Polynomial

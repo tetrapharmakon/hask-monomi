@@ -68,9 +68,9 @@ main =
     it "-3xz^{-3} * 3y^{-2}=-9xy^{-2}z^{-3}" $
       monoMultiply m n `shouldBe` (-9, [('x', 1), ('y', -2), ('z', -3)])
   -- monomial powers
-    it "(x)^3 = x^3" $ monoRaise b 3 `shouldBe` (1, [('x', 3)])
-    it "(x)^1 = x" $ monoRaise b 1 `shouldBe` b
-    it "(2x)^3 = 8x^3" $ monoRaise f 3 `shouldBe` (8, [('x', 3)])
+    it "(x)^3 = x^3" $ monoRaise b 3 `shouldBe` Just (1, [('x', 3)])
+    it "(x)^1 = x" $ monoRaise b 1 `shouldBe` Just b
+    it "(2x)^3 = 8x^3" $ monoRaise f 3 `shouldBe` Just (8, [('x', 3)])
   -- isMultiple
     it "x and 2x are multiples" $ isMultiple b f `shouldBe` True
     it "y and 3y^{-1} are not multiples" $ isMultiple c n `shouldBe` False -- isLike
@@ -128,23 +128,23 @@ main =
       monoShow v `shouldBe` "6x^3z^3"
   -- monoRaise
     it "monoRaise tested against custom monomials" $ do
-      monoRaise z 3 `shouldBe` (0, [])
-      monoRaise z1 1 `shouldBe` (0, [])
-      monoRaise z2 2 `shouldBe` (0, [])
-      monoRaise u 3 `shouldBe` (1, [])
-      monoRaise u1 1 `shouldBe` (1, [])
-      monoRaise a 2 `shouldBe` (9, [])
-      monoRaise a' 3 `shouldBe` (27, [])
-      monoRaise b 3 `shouldBe` (1, [('x', 3)])
-      monoRaise c 1 `shouldBe` (1, [('y', 1)])
-      monoRaise d 2 `shouldBe` monoInit 1 "x" [6]
-      monoRaise e 3 `shouldBe` (1, [('y', 12)])
-      monoRaise f 1 `shouldBe` f
-      monoRaise g 2 `shouldBe` (9, [('x', 4), ('y', 2)])
-      monoRaise n 3 `shouldBe` (27, [('y', -6)])
-      monoRaise m 1 `shouldBe` monoInit (-3) "xz" [1, -3]
-      monoRaise w 2 `shouldBe` monoInit 9 "xy" [4, 6]
-      monoRaise v 3 `shouldBe` monoInit (6 ^ 3) "xz" [9, 9]
+      monoRaise z 3 `shouldBe`  Just (0, [])
+      monoRaise z1 1 `shouldBe` Just (0, [])
+      monoRaise z2 2 `shouldBe` Just (0, [])
+      monoRaise u 3 `shouldBe`  Just (1, [])
+      monoRaise u1 1 `shouldBe` Just (1, [])
+      monoRaise a 2 `shouldBe`  Just (9, [])
+      monoRaise a' 3 `shouldBe` Just (27, [])
+      monoRaise b 3 `shouldBe`  Just (1, [('x', 3)])
+      monoRaise c 1 `shouldBe`  Just (1, [('y', 1)])
+      monoRaise e 3 `shouldBe`  Just (1, [('y', 12)])
+      monoRaise f 1 `shouldBe`  Just f
+      monoRaise g 2 `shouldBe`  Just (9, [('x', 4), ('y', 2)])
+      monoRaise n 3 `shouldBe`  Just (27, [('y', -6)])
+      monoRaise d 2 `shouldBe`  Just (monoInit 1 "x" [6])
+      monoRaise m 1 `shouldBe`  Just (monoInit (-3) "xz" [1, -3])
+      monoRaise w 2 `shouldBe`  Just (monoInit 9 "xy" [4, 6])
+      monoRaise v 3 `shouldBe`  Just (monoInit (6 ^ 3) "xz" [9, 9])
   -- monoSum
     it "monoSum tested against custom monomials" $ do
       monoSum [z, z] `shouldBe` (0, [])
